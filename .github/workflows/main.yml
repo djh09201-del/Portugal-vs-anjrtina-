@@ -1,0 +1,39 @@
+name: Build Android APK
+
+on:
+workflow_dispatch:
+push:
+paths:
+- 'PORTUGAL_VS_ANJRTINA_Android_Project.zip'
+- '.github/workflows/main.yml'
+
+jobs:
+build:
+runs-on: ubuntu-latest
+steps:
+- name: Checkout repository
+uses: actions/checkout@v4
+
+  - name: Set up Java
+    uses: actions/setup-java@v4
+    with:
+      distribution: temurin
+      java-version: '17'
+
+  - name: Set up Android SDK
+    uses: android-actions/setup-android@v3
+
+  - name: Unzip project
+    run: |
+      unzip PORTUGAL_VS_ANJRTINA_Android_Project.zip -d work
+
+  - name: Build APK
+    run: |
+      cd work
+      gradle assembleDebug
+
+  - name: Upload APK
+    uses: actions/upload-artifact@v4
+    with:
+      name: PORTUGAL-VS-ANJRTINA-debug-APK
+      path: work/app/build/outputs/apk/debug/app-debug.apk
